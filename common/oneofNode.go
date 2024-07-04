@@ -33,6 +33,11 @@ func (oNode *OneofNode) AddLine(trimedLineText string) {
 		return
 	}
 
+	// option
+	if strings.Index(trimedLineText, OPTION) == 0 {
+		return
+	}
+
 	vNode := InitVariableNode(trimedLineText)
 
 	oNode.Body = append(
@@ -42,7 +47,12 @@ func (oNode *OneofNode) AddLine(trimedLineText string) {
 }
 
 func (oNode *OneofNode) String() string {
-	res := fmt.Sprintf("export type %s = OneOf<'%s', {\n", oNode.OneofName, oNode.OneofName)
+	res := fmt.Sprintf(
+		"export type %s = %s<'%s', {\n",
+		oNode.OneofName,
+		ONEOF_GENERIC_NAME,
+		oNode.OneofName,
+	)
 
 	for _, vNode := range oNode.Body {
 		res += vNode.String()

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -75,9 +76,13 @@ func parseEnum (s *common.MyScanner) *common.EnumNode {
 	return eNode
 }
 
-func parseMessage (s *common.MyScanner) *common.MessageNode {
+func parseMessage (
+	s *common.MyScanner,
+	substitutionMap common.SubstitutionMap,
+	importSourceMap common.ImportMap,
+) *common.MessageNode {
 	messageName := common.GetSecondWord(s.TrimedText(), common.MESSAGE)
-	mNode := common.InitMessageNode(messageName)
+	mNode := common.InitMessageNode(messageName, substitutionMap)
 
 	forNode(s, func(trimedLineText string, i int) bool {
 		if i == 0 {
@@ -85,6 +90,13 @@ func parseMessage (s *common.MyScanner) *common.MessageNode {
 		}
 
 		if strings.Index(trimedLineText, common.ONEOF) == 0 {
+			if substitution, ok := substitutionMap["oneof"]; ok {
+				if substitution.ImportSource != "" {
+					importSourceMap[substitution.ImportSource] = make(map[string]bool)
+					importSourceMap[substitution.ImportSource][common.ONEOF_GENERIC_NAME] = true
+				}
+			}
+
 			oNode := parseOneof(s)
 			mNode.AddOneofNode(oNode)
 			return true
@@ -97,7 +109,7 @@ func parseMessage (s *common.MyScanner) *common.MessageNode {
 		}
 
 		if strings.Index(trimedLineText, common.MESSAGE) == 0 {
-			mNodeToAdd := parseMessage(s)
+			mNodeToAdd := parseMessage(s, substitutionMap, importSourceMap)
 			mNode.AddMessageNode(mNodeToAdd)
 			return true
 		}
@@ -106,13 +118,27 @@ func parseMessage (s *common.MyScanner) *common.MessageNode {
 		return false
 	})
 
-	mNode.PrepareVars()
+	mNode.PrepareVars(importSourceMap)
 
 	return mNode
 }
 
 func main() {
-	file, err := os.Open("./tts.proto")
+	var protoPath string
+	var key string
+
+	flag.StringVar(&protoPath, "p", "", "Absolute proto path")
+	flag.StringVar(&key, "k", "datasphere", "Config subtitution key")
+
+	flag.Parse()
+
+	if protoPath == "" {
+		log.Fatal("Specify proto path !")
+	}
+
+	substitutionMap, _ := common.ParseConfig(key)
+
+	file, err := os.Open(protoPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -122,14 +148,22 @@ func main() {
 	s := &common.MyScanner{Scanner: bufio.NewScanner(file)}
 	mList := make([]*common.MessageNode, 0)
 
+	importSourceMap := common.ImportMap{};
+
 	for s.Scan() {
 		lineText := s.TrimedText()
 
 		if strings.Contains(lineText, common.MESSAGE) {
-			mNode := parseMessage(s)
+			mNode := parseMessage(
+				s,
+				substitutionMap,
+				importSourceMap,
+			)
 			mList = append(mList, mNode)
 		}
 	}
+
+	fmt.Println(common.ImportMapToString(importSourceMap))
 
 	for _, mNode := range mList {
 		fmt.Println(mNode.String())

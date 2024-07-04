@@ -2,6 +2,7 @@ package common
 
 import (
 	"bufio"
+	"fmt"
 	"strings"
 )
 
@@ -13,37 +14,11 @@ const (
 	SPACE_RUNE = ' '
 	REPEATED = "repeated"
 	OPTIONAL = "optional"
+	OPTION = "option"
 	RESERVED = "reserved"
 	MAP = "map"
+	ONEOF_GENERIC_NAME = "OneOf"
 )
-
-var KNOWN_TYPES = map[string]string{
-	"bool": "boolean",
-	"string": "string",
-	"float": "number",
-	"double": "number",
-	"int32": "number",
-	"uint32": "number",
-	"bytes": "Buffer",
-	"int64": "Int64",
-	"uint64": "Int64",
-	"google.protobuf.Int64Value": "Int64Value",
-	"google.protobuf.FloatValue": "FloatValue",
-	"google.protobuf.DoubleValue": "DoubleValue",
-	"google.protobuf.BoolValue": "BoolValue",
-	"google.protobuf.StringValue": "StringValue",
-	"google.protobuf.Timestamp": "Timestamp",
-	"google.protobuf.Duration": "Duration",
-	"google.type.TimeOfDay": "TimeOfDay",
-	"google.type.DayOfWeek": "DayOfWeek",
-	"google.protobuf.FieldMask": "FieldMask",
-	"google.protobuf.Empty": "Empty",
-	"google.protobuf.Any": "Any",
-	"google.protobuf.Struct": "Struct",
-	"google.protobuf.Value": "Value",
-	"google.protobuf.ListValue": "ListValue",
-}
-
 
 func nextNotSpaceIdx (spaceIdx int, lineText string) int {
 	i := spaceIdx + 1;
@@ -72,4 +47,24 @@ type MyScanner struct {
 
 func (s *MyScanner) TrimedText() string {
 	return strings.TrimSpace(s.Text())
+}
+
+type Set = map[string]bool
+type ImportSource = string
+type ImportMap = map[ImportSource]Set
+
+func ImportMapToString (importMap ImportMap) string {
+	res := ""
+
+	for importSource, typesToImport := range importMap {
+		res += "import {\n"
+
+		for typeToImport, _ := range typesToImport {
+			res += fmt.Sprintf("%s,\n", typeToImport)
+		}
+
+		res += fmt.Sprintf("} from \"%s\"\n", importSource)
+	}
+
+	return res
 }

@@ -1,0 +1,78 @@
+{
+    "datasphere": {
+        "oneof": {
+            "substitution": "OneOf",
+            "import_source": "https://github.com/GermanVor/proto-script/blob/main/oneof.ts"
+        },
+        "double": {
+            "substitution": "string"
+        },
+        "bool": {
+            "substitution": "boolean"
+        },
+        "int64": {
+            "substitution": "Int64",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.Int64Value": {
+            "substitution": "Int64Value",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.FloatValue": {
+            "substitution": "FloatValue",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.DoubleValue": {
+            "substitution": "DoubleValue",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.BoolValue": {
+            "substitution": "BoolValue",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.StringValue": {
+            "substitution": "StringValue",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.Timestamp": {
+            "substitution": "Timestamp",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.Duration": {
+            "substitution": "Duration",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.type.TimeOfDay": {
+            "substitution": "TimeOfDay",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.type.DayOfWeek": {
+            "substitution": "DayOfWeek",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.FieldMask": {
+            "substitution": "FieldMask",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.Empty": {
+            "substitution": "Empty",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.Any": {
+            "substitution": "Any",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.Struct": {
+            "substitution": "Struct",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.Value": {
+            "substitution": "Value",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        },
+        "google.protobuf.ListValue": {
+            "substitution": "ListValue",
+            "import_source": "@yandex-data-ui/cloud-schemas/build/models/protobuf"
+        }
+    }
+}

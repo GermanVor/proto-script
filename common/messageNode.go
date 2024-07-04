@@ -16,15 +16,17 @@ type MessageNode struct {
 	body []*VariableNode
 	NamespaceTypeList []string
 	NamespaceBody []NamespaceBodyType
+	substitutionMap SubstitutionMap
 }
 
-func InitMessageNode(messageName string) *MessageNode {
+func InitMessageNode(messageName string, substitutionMap SubstitutionMap) *MessageNode {
 	return &MessageNode{
 		MessageName: messageName,
 		MessageType: messageName,
 		body: []*VariableNode{},
 		NamespaceTypeList: []string{},
 		NamespaceBody: []NamespaceBodyType{},
+		substitutionMap: substitutionMap,
 	}
 }
 
@@ -62,6 +64,11 @@ func (mNode *MessageNode) AddLine(trimedLineText string) {
 
 	// reserved
 	if strings.Index(trimedLineText, RESERVED) == 0 {
+		return
+	}
+
+	// option
+	if strings.Index(trimedLineText, OPTION) == 0 {
 		return
 	}
 
@@ -113,18 +120,34 @@ func (mNode *MessageNode) String() string {
 	return res
 }
 
-func (mNode *MessageNode) PrepareVars() {
-	getRealType := func (vType string) (string, bool ) {
+func (mNode *MessageNode) PrepareVars(importSourceMap ImportMap) {
+	getSubstitutionType := func (vType string) (string, bool) {
+		if mNode.substitutionMap == nil {
+			return vType, false
+		}
+
+		if tsValue, ok := mNode.substitutionMap[vType]; ok {
+			if tsValue.ImportSource != "" {
+				if importSourceMap[tsValue.ImportSource] == nil {
+					importSourceMap[tsValue.ImportSource] = make(Set)
+				}
+
+				importSourceMap[tsValue.ImportSource][tsValue.Substitution] = true
+			}
+
+			return tsValue.Substitution, true
+		}
+
+		return vType, false
+	}
+
+	getRealType := func (vType string) (string, bool) {
 		if slices.Contains(mNode.NamespaceTypeList, vType) {
 			vType = fmt.Sprintf("%s.%s", mNode.MessageName, vType)
 			return vType, true
 		}
 
-		if tsValue, ok := KNOWN_TYPES[vType]; ok {
-			return tsValue, true
-		}
-
-		return vType, false
+		return getSubstitutionType(vType)
 	}
 
 	for _, vNode := range mNode.body {

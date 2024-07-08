@@ -46,17 +46,6 @@ func (mNode *MessageNode) AddMessageNode(mNodeToAdd *MessageNode) {
 }
 
 func (mNode *MessageNode) AddLine(trimedLineText string) {
-	// new line case
-	if trimedLineText == "" {
-		return
-	}
-
-	// comment case
-	if strings.Index(trimedLineText, "//") == 0 {
-		// TODO save comment
-		return
-	}
-
 	// end case
 	if strings.Contains(trimedLineText, "}") {
 		return

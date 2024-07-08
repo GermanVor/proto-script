@@ -13,15 +13,23 @@ import (
 
 // true - если внутри коллбека снова вызывается forNode
 // false - если внутри коллбека не вызывается forNode
-type ForNodeCallBack func(line string, i int) bool
+type ForNodeCallBack func(trimedLineText string, i int) bool
 
+// итерируется от `{` и до `}` включительно
 func forNode (s *common.MyScanner, callBack ForNodeCallBack) int {
-	trimedLineText := s.TrimedText()
 	openBracketCount := 0;
 
-	i := 0
+	for i := 0 ; i == 0 || (openBracketCount > 0 && s.Scan()); i++ {
+		trimedLineText := s.TrimedText()
 
-	for {
+		continueFlag :=
+			trimedLineText == "" ||
+			strings.Index(trimedLineText, "//") == 0
+
+		if continueFlag {
+			continue
+		}
+
 		isTrigeredForNodeInside := callBack(trimedLineText, i)
 
 		if strings.Contains(trimedLineText, "{") && !isTrigeredForNodeInside {
@@ -31,13 +39,6 @@ func forNode (s *common.MyScanner, callBack ForNodeCallBack) int {
 		if strings.Contains(trimedLineText, "}") {
 			openBracketCount -= 1
 		}
-
-		if openBracketCount <= 0 || !s.Scan() {
-			break
-		}
-
-		trimedLineText = s.TrimedText()
-		i++
 	}
 
 	return openBracketCount
@@ -151,16 +152,15 @@ func main() {
 	importSourceMap := common.ImportMap{};
 
 	for s.Scan() {
-		lineText := s.TrimedText()
+		forNode(s, func(trimedLineText string, i int) bool {
+			if strings.Index(trimedLineText, common.MESSAGE) == 0 {
+				mNode := parseMessage(s, substitutionMap, importSourceMap)
+				mList = append(mList, mNode)
+				return true
+			}
 
-		if strings.Contains(lineText, common.MESSAGE) {
-			mNode := parseMessage(
-				s,
-				substitutionMap,
-				importSourceMap,
-			)
-			mList = append(mList, mNode)
-		}
+			return false
+		})
 	}
 
 	fmt.Println(common.ImportMapToString(importSourceMap))

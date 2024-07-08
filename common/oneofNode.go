@@ -18,16 +18,6 @@ func InitOneofNode(oneofName string) *OneofNode {
 }
 
 func (oNode *OneofNode) AddLine(trimedLineText string) {
-	// new line case
-	if trimedLineText == "" {
-		return
-	}
-
-	// comment case
-	if strings.Index(trimedLineText, "//") == 0 {
-		return
-	}
-
 	// end case
 	if strings.Contains(trimedLineText, "}") {
 		return

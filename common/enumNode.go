@@ -18,18 +18,6 @@ func InitEnumNode(enumName string) *EnumNode {
 }
 
 func (eNode *EnumNode) AddLine(trimedLineText string) {
-	// new line case
-	if trimedLineText == "" {
-		eNode.Body = append(eNode.Body, trimedLineText)
-		return
-	}
-
-	// comment case
-	if strings.Index(trimedLineText, "//") == 0 {
-		eNode.Body = append(eNode.Body, trimedLineText)
-		return
-	}
-
 	// end case
 	if strings.Contains(trimedLineText, "}") {
 		return

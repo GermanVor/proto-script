@@ -25,7 +25,15 @@ func toCamelCase(s string) string {
 	return res
 }
 
-func min(value_0, value_1 int) int {
+func minTryNotMinusOne(value_0, value_1 int) int {
+	if value_0 == -1 {
+		return value_1
+	}
+
+	if value_1 == -1 {
+		return value_0
+	}
+
 	if value_0 < value_1 {
 		return value_0
 	}
@@ -47,6 +55,15 @@ type VariableNode struct {
 }
 func InitVariableNode (trimedLineText string) *VariableNode {
 	// https://protobuf.dev/programming-guides/proto3/#field-labels
+
+	notVariableCase :=
+		strings.Index(trimedLineText, RESERVED) == 0 ||
+		strings.Index(trimedLineText, OPTION) == 0 ||
+		strings.Index(trimedLineText, SEMICOLON) != len(trimedLineText) - 1
+
+	if notVariableCase {
+		return nil
+	}
 
 	// optional case
 	isOptional := false
@@ -73,7 +90,7 @@ func InitVariableNode (trimedLineText string) *VariableNode {
 		// map<string, string> locales = 1;
 
 		keyStartIdx := strings.Index(trimedLineText, "<") + 1
-		keyEndIdx := min(
+		keyEndIdx := minTryNotMinusOne(
 			strings.Index(trimedLineText, SPACE),
 			strings.Index(trimedLineText, ","),
 		)
@@ -100,7 +117,11 @@ func InitVariableNode (trimedLineText string) *VariableNode {
 	}
 
 	// locales = 1;
-	varName := trimedLineText[0: strings.Index(trimedLineText, SPACE)]
+	varNameEndIdx := minTryNotMinusOne(
+		strings.Index(trimedLineText, SPACE),
+		strings.Index(trimedLineText, "="),
+	)
+	varName := trimedLineText[0: varNameEndIdx]
 
 	return &VariableNode{
 		Name: varName,

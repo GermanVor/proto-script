@@ -18,6 +18,7 @@ const (
 	RESERVED = "reserved"
 	MAP = "map"
 	ONEOF_GENERIC_NAME = "OneOf"
+	SEMICOLON = ";"
 )
 
 func nextNotSpaceIdx (spaceIdx int, lineText string) int {

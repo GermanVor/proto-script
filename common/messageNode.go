@@ -51,18 +51,9 @@ func (mNode *MessageNode) AddLine(trimedLineText string) {
 		return
 	}
 
-	// reserved
-	if strings.Index(trimedLineText, RESERVED) == 0 {
-		return
+	if vNode := InitVariableNode(trimedLineText); vNode != nil {
+		mNode.body = append(mNode.body, vNode)
 	}
-
-	// option
-	if strings.Index(trimedLineText, OPTION) == 0 {
-		return
-	}
-
-	vNode := InitVariableNode(trimedLineText)
-	mNode.body = append(mNode.body, vNode)
 }
 
 func (mNode *MessageNode) String() string {

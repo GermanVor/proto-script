@@ -23,17 +23,9 @@ func (oNode *OneofNode) AddLine(trimedLineText string) {
 		return
 	}
 
-	// option
-	if strings.Index(trimedLineText, OPTION) == 0 {
-		return
+	if vNode := InitVariableNode(trimedLineText); vNode != nil {
+		oNode.Body = append(oNode.Body, vNode)
 	}
-
-	vNode := InitVariableNode(trimedLineText)
-
-	oNode.Body = append(
-		oNode.Body,
-		vNode,
-	)
 }
 
 func (oNode *OneofNode) String() string {

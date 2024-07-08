@@ -1,7 +1,6 @@
 {
     "datasphere": {
         "oneof": {
-            "substitution": "OneOf",
             "import_source": "https://github.com/GermanVor/proto-script/blob/main/oneof.ts"
         },
         "double": {

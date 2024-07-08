@@ -124,13 +124,15 @@ func parseMessage (
 	return mNode
 }
 
+var protoPath string
+var key string
+
+func init() {
+	flag.StringVar(&protoPath, "p", "", "Absolute proto file path")
+	flag.StringVar(&key, "k", "datasphere", "Config (./config.json) subtitution key")
+}
+
 func main() {
-	var protoPath string
-	var key string
-
-	flag.StringVar(&protoPath, "p", "", "Absolute proto path")
-	flag.StringVar(&key, "k", "datasphere", "Config subtitution key")
-
 	flag.Parse()
 
 	if protoPath == "" {

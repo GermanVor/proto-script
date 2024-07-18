@@ -88,11 +88,15 @@ func InitVariableNode (trimedLineText string) *VariableNode {
 	// map case
 	if strings.Index(trimedLineText, MAP) == 0 {
 		// map<string, string> locales = 1;
+		// map <string, string> locales = 1;
 
 		keyStartIdx := strings.Index(trimedLineText, "<") + 1
-		keyEndIdx := minTryNotMinusOne(
-			strings.Index(trimedLineText, SPACE),
-			strings.Index(trimedLineText, ","),
+
+		freeMapLineText := trimedLineText[keyStartIdx:]
+
+		keyEndIdx := keyStartIdx + minTryNotMinusOne(
+			strings.Index(freeMapLineText, SPACE),
+			strings.Index(freeMapLineText, ","),
 		)
 
 		key := trimedLineText[keyStartIdx: keyEndIdx]
